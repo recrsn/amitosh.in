@@ -56,7 +56,7 @@ async function processFile(src) {
 }
 
 async function clean() {
-    await fs.rm('build', {recursive: true});
+    await fs.rm('build', {recursive: true, force: true});
 }
 
 if (process.argv[2] === 'watch') {
@@ -78,5 +78,5 @@ if (process.argv[2] === 'watch') {
                 await processFile(relPath);
             }
         }
-    })();
+    })().catch(console.error);
 }
