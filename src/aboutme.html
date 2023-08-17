@@ -6,11 +6,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Me | Amitosh</title>
-    <link rel="stylesheet" href="index.css"/>
+    <link rel="stylesheet" href="styles/index.css"/>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-8937NR279Q"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
         gtag('js', new Date());
 
         gtag('config', 'G-8937NR279Q');
@@ -18,18 +22,21 @@
 </head>
 
 <body class="flex flex-col">
+<div class="progress fixed top-0 left-0 h-1 w-full">
+    <div class="progress-bar h-1 bg-orange-700 w-0"></div>
+</div>
 <header class="border-b">
     <div class="container mx-auto flex flex-row px-2 py-2">
         <h1 class="py-4">
-            <a href="/" class="py-2 text-orange-700 hover:text-orange-500">
+            <a href="/" class="py-2 text-orange-700 hover:text-orange-500" data-swap="main">
                 Amitosh
             </a>
         </h1>
         <nav class="ml-auto">
             <ul class="flex flex-row py-4">
-                <li class="mx-2"><a class="text-orange-700 hover:text-orange-500" href="index.html">Home</a>
+                <li class="mx-2"><a data-swap="main" class="text-orange-700 hover:text-orange-500" href="index.html">Home</a>
                 </li>
-                <li class="mx-2"><a class="text-orange-700 hover:text-orange-500"
+                <li class="mx-2"><a data-swap="main" class="text-orange-700 hover:text-orange-500"
                                     href="aboutme.html">Resume</a></li>
                 <li class="mx-2"><a class="text-orange-700 hover:text-orange-500"
                                     href="https://amitosh.medium.com">Blog</a></li>
@@ -52,19 +59,19 @@
     <section class="my-8">
         <h2 class="text-3xl my-2">🙋🏻‍About Me</h2>
         <div class="py-4 border-b">
-        <p>
-            I've created, as well as contributed to a number of open-source projects using Java,
-            Go, Node.js, &amp; Python.
-        </p>
-        <p class="mt-2">
-            I have worked with the FOSSi Foundation as part of the Google Summer of Code, 2017,
-            and the Fedora
-            Project as part of
-            the Google Summer of Code, 2018, and I am an active contributor to Fedora Project,
-            FOSSi foundation,
-            Elastic and numerous
-            other open-source projects.
-        </p>
+            <p>
+                I've created, as well as contributed to a number of open-source projects using Java,
+                Go, Node.js, &amp; Python.
+            </p>
+            <p class="mt-2">
+                I have worked with the FOSSi Foundation as part of the Google Summer of Code, 2017,
+                and the Fedora
+                Project as part of
+                the Google Summer of Code, 2018, and I am an active contributor to Fedora Project,
+                FOSSi foundation,
+                Elastic and numerous
+                other open-source projects.
+            </p>
         </div>
     </section>
     <section class="my-8">
@@ -280,31 +287,36 @@
         <h2 class="text-3xl my-2">📞 Contact me</h2>
         <ul class="py-4 justify-center">
             <li>
-                <a class="flex flex-row space-x-2 items-center text-orange-700 hover:text-orange-500" href="mailto:amitosh@recrsn.com">
+                <a class="flex flex-row space-x-2 items-center text-orange-700 hover:text-orange-500"
+                   href="mailto:amitosh@recrsn.com">
                     <img class="w-4 h-4" src="assets/mail-outline.svg" alt="Email"/>
                     <span>Email</span>
                 </a>
             </li>
             <li>
-                <a class="flex flex-row space-x-2 items-center text-orange-700 hover:text-orange-500" href="https://twitter.com/recrsn">
+                <a class="flex flex-row space-x-2 items-center text-orange-700 hover:text-orange-500"
+                   href="https://twitter.com/recrsn">
                     <img class="w-4 h-4" src="assets/logo-twitter.svg" alt="Twitter"/>
                     <span>Twitter</span>
                 </a>
             </li>
             <li>
-                <a class="flex flex-row space-x-2 items-center text-orange-700 hover:text-orange-500" href="https://linkedin.com/in/amitosh-swain">
+                <a class="flex flex-row space-x-2 items-center text-orange-700 hover:text-orange-500"
+                   href="https://linkedin.com/in/amitosh-swain">
                     <img class="w-4 h-4" src="assets/logo-linkedin.svg" alt="LinkedIn"/>
                     <span>LinkedIn</span>
                 </a>
             </li>
             <li>
-                <a class="flex flex-row space-x-2 items-center text-orange-700 hover:text-orange-500" href="https://github.com/recrsn">
+                <a class="flex flex-row space-x-2 items-center text-orange-700 hover:text-orange-500"
+                   href="https://github.com/recrsn">
                     <img class="w-4 h-4" src="assets/logo-github.svg" alt="GitHub"/>
                     <span>GitHub</span>
                 </a>
             </li>
             <li>
-                <a class="flex flex-row space-x-2 items-center text-orange-700 hover:text-orange-500" href="https://amitosh.medium.com">
+                <a class="flex flex-row space-x-2 items-center text-orange-700 hover:text-orange-500"
+                   href="https://amitosh.medium.com">
                     <img class="w-4 h-4" src="assets/logo-medium.svg" alt="Medium"/>
                     <span>Medium</span>
                 </a>
@@ -319,6 +331,7 @@
         </p>
     </div>
 </footer>
+<script async defer src="scripts/index.js"></script>
 </body>
 
 </html>

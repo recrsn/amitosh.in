@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Amitosh's Home</title>
-    <link rel="stylesheet" href="index.css"/>
+    <link rel="stylesheet" href="styles/index.css"/>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-8937NR279Q"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
@@ -18,19 +18,22 @@
 </head>
 
 <body class="flex flex-col">
+<div class="progress fixed top-0 left-0 h-1 w-full">
+    <div class="progress-bar h-1 bg-orange-700 w-0"></div>
+</div>
 <header class="border-b">
     <div class="container mx-auto flex flex-row px-2 py-2">
         <h1 class="py-4">
-            <a href="/" class="py-2 text-orange-700 hover:text-orange-500">
+            <a href="/" class="py-2 text-orange-700 hover:text-orange-500" data-swap="main">
                 Amitosh
             </a>
         </h1>
         <nav class="ml-auto">
             <ul class="flex flex-row py-4">
-                <li class="mx-2"><a class="text-orange-700 hover:text-orange-500" href="index.html">Home</a>
+                <li class="mx-2"><a class="text-orange-700 hover:text-orange-500" href="index.html" data-swap="main">Home</a>
                 </li>
                 <li class="mx-2"><a class="text-orange-700 hover:text-orange-500"
-                                    href="aboutme.html">Resume</a></li>
+                                    href="aboutme.html" data-swap="main">Resume</a></li>
                 <li class="mx-2"><a class="text-orange-700 hover:text-orange-500"
                                     href="https://amitosh.medium.com">Blog</a></li>
                 <li class="mx-2"><a class="text-orange-700 hover:text-orange-500"
@@ -129,6 +132,7 @@
         </p>
     </div>
 </footer>
+<script async defer src="scripts/index.js"></script>
 </body>
 
 </html>

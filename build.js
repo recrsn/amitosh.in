@@ -52,7 +52,7 @@ async function processFile(src) {
         await processSvg(src, destPath);
     } else {
         if (src.endsWith('.html')) {
-           await processCss('src/index.css', 'build/index.css');
+           await processCss('src/styles/index.css', 'build/styles/index.css');
         }
         await copy(src, destPath);
     }
