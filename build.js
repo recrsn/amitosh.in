@@ -59,6 +59,20 @@ async function clean() {
     await fs.rm('build', {recursive: true, force: true});
 }
 
+async function fsReadDirRecursive(src) {
+    const files = [];
+    const entries = await fs.readdir(src, {withFileTypes: true});
+    for (const entry of entries) {
+        const filePath = path.join(src, entry.name);
+        if (entry.isDirectory()) {
+            files.push(...await fsReadDirRecursive(filePath));
+        } else {
+            files.push(filePath);
+        }
+    }
+    return files;
+}
+
 if (process.argv[2] === 'watch') {
     console.log('Watching for changes...');
     chokidar.watch('src')
@@ -71,12 +85,9 @@ if (process.argv[2] === 'watch') {
 } else {
     (async () => {
         await clean();
-        const files = await fs.readdir('src', {withFileTypes: true, recursive: true});
+        const files = await fsReadDirRecursive('src', );
         for (const file of files) {
-            if (file.isFile()) {
-                const relPath = path.join(file.path, file.name);
-                await processFile(relPath);
-            }
+            await processFile(file);
         }
     })().catch(console.error);
 }
