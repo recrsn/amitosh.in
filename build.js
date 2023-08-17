@@ -51,6 +51,9 @@ async function processFile(src) {
     } else if (src.endsWith('.svg')) {
         await processSvg(src, destPath);
     } else {
+        if (src.endsWith('.html')) {
+           await processCss('src/index.css', 'build/index.css');
+        }
         await copy(src, destPath);
     }
 }
