@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Me | Amitosh</title>
+    <link rel="stylesheet" href="styles/index.css"/>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8937NR279Q"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
+        gtag('js', new Date());
+
+        gtag('config', 'G-8937NR279Q');
+    </script>
+</head>
+
+<body class="flex flex-col">
+<div class="progress fixed top-0 left-0 h-1 w-full">
+    <div class="progress-bar h-1 bg-orange-700 w-100 transition-transform origin-left scale-x-0"></div>
+</div>
+<header class="border-b">
+    <div class="container mx-auto flex flex-row px-2 py-2">
+        <h1 class="py-4">
+            <a href="/" class="py-2 text-orange-700 hover:text-orange-500" data-swap="main">
+                Amitosh
+            </a>
+        </h1>
+        <nav class="ml-auto">
+            <ul class="flex flex-row py-4">
+                <li class="mx-2"><a data-swap="main" class="text-orange-700 hover:text-orange-500" href="index.html">Home</a>
+                </li>
+                <li class="mx-2"><a data-swap="main" class="text-orange-700 hover:text-orange-500"
+                                    href="aboutme.html">Resume</a></li>
+                <li class="mx-2"><a class="text-orange-700 hover:text-orange-500"
+                                    href="https://amitosh.medium.com">Blog</a></li>
+                <li class="mx-2"><a class="text-orange-700 hover:text-orange-500"
+                                    href="https://recursivefunction.blog">Newsletter</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+<main class="container mx-auto max-w-4xl p-8 lg:px-16 ">
+    <section class="py-8 flex flex-row items-center border-b">
+        <img class="p-0.5 rounded-full shadow-lg w-32 h-32" src="{{personal.image}}"
+             alt="{{personal.name}}"/>
+        <div class="mr-2 p-4">
+            <h1 class="text-4xl my-2">{{personal.name}}</h1>
+            <p class="text-neutral-700">💼 {{personal.role}}</p>
+            <p class="text-neutral-500">📍 {{personal.location}}</p>
+        </div>
+    </section>
+    <section class="my-8">
+        <h2 class="text-3xl my-2">🙋🏻‍About Me</h2>
+        <div class="py-4 border-b">
+            {{#each personal.about}}
+            <p {{#if @first}}{{else}}class="mt-2"{{/if}}>
+                {{this}}
+            </p>
+            {{/each}}
+        </div>
+    </section>
+    <section class="my-8">
+        <h2 class="text-3xl my-2">💼 Experience</h2>
+        <div class="flex flex-col">
+            {{#each experience}}
+            <div class="py-4 border-b">
+                <h3 class="text-xl">{{title}}</h3>
+                <p class="text-neutral-700">{{company}}</p>
+                <div class="flex flex-row space-x-2">
+                    <p class="text-sm text-neutral-500">📍 {{location}}</p>
+                    <p class="text-sm text-neutral-500">🗓️ {{duration}}</p>
+                </div>
+                <p class="mt-2">{{description}}</p>
+                {{#if responsibilities.length}}
+                <p class="mt-2">Some of the things I worked on:</p>
+                <ul class="list-disc list-inside mt-2">
+                    {{#each responsibilities}}
+                    <li>{{this}}</li>
+                    {{/each}}
+                </ul>
+                {{/if}}
+            </div>
+            {{/each}}
+        </div>
+    </section>
+    <section class="my-8">
+        <h2 class="text-3xl my-2">🎓 Education</h2>
+        {{#each education}}
+        <div class="py-4 border-b">
+            <h3 class="text-xl">{{institution}}</h3>
+            <p class="text-neutral-700">{{degree}}</p>
+            <div class="flex flex-row space-x-2">
+                <p class="text-sm text-neutral-500">{{location}}</p>
+                <p class="text-sm text-neutral-500">{{duration}}</p>
+            </div>
+            <p class="mt-2">{{description}}</p>
+            <p>{{additional}}</p>
+        </div>
+        {{/each}}
+    </section>
+    <section class="my-8">
+        <h2 class="text-3xl my-2">👨🏻‍🔧 Skills</h2>
+        <div class="py-4 border-b">
+            <h3 class="text-xl">👨🏻‍💻 Programming Languages</h3>
+            <ul class="list-disc list-inside mt-2">
+                {{#each skills.programming}}
+                <li>{{this}}</li>
+                {{/each}}
+            </ul>
+        </div>
+    </section>
+    <section class="my-8">
+        <h2 class="text-3xl my-2">📞 Contact me</h2>
+        <ul class="py-4 justify-center">
+            {{#each contact}}
+            <li>
+                <a class="flex flex-row space-x-2 items-center text-orange-700 hover:text-orange-500"
+                   href="{{url}}">
+                    <img class="w-4 h-4" src="{{icon}}" alt="{{type}}"/>
+                    <span>{{type}}</span>
+                </a>
+            </li>
+            {{/each}}
+        </ul>
+    </section>
+</main>
+<footer class="py-8">
+    <div class="container mx-auto flex flex-row px-2">
+        <p class="mx-auto text-xs text-neutral-400">
+            © 2023 Amitosh Swain Mahapatra. Content available under CC BY 4.0
+        </p>
+    </div>
+</footer>
+<script async defer src="scripts/index.js"></script>
+</body>
+
+</html>
