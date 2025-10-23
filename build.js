@@ -48,7 +48,16 @@ async function copy(src, dest) {
 async function processTemplate(src, dest) {
 	console.log(`[TEMPLATE] ${src} -> ${dest}`);
 	const templateContent = await fs.readFile(src, "utf-8");
-	const dataPath = path.join(path.dirname(src), "data", "resume.yaml");
+
+	// Determine which data file to use based on the template name
+	const templateName = path.basename(src, '.template.html');
+	// Map template names to data file names
+	const dataFileMap = {
+		'aboutme': 'resume',
+		'talks': 'talks'
+	};
+	const dataFileName = dataFileMap[templateName] || templateName;
+	const dataPath = path.join(path.dirname(src), "data", `${dataFileName}.yaml`);
 	const dataContent = await fs.readFile(dataPath, "utf-8");
 	const data = yaml.load(dataContent);
 

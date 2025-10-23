@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Talks | Amitosh</title>
+    <link rel="stylesheet" href="styles/index.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8937NR279Q"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
+        gtag('js', new Date());
+
+        gtag('config', 'G-8937NR279Q');
+    </script>
+    <style>
+        .slide-container {
+            position: relative;
+            background: #f5f5f5;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .slide-canvas {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .slide-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .slide-btn {
+            padding: 0.5rem 1rem;
+            background: #c2410c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .slide-btn:hover:not(:disabled) {
+            background: #ea580c;
+        }
+
+        .slide-btn:disabled {
+            background: #d4d4d4;
+            cursor: not-allowed;
+        }
+
+        .slide-counter {
+            font-weight: 500;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .youtube-embed {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 8px;
+        }
+
+        .youtube-embed iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .talk-card {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .talk-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: #fed7aa;
+            color: #9a3412;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            margin-right: 0.5rem;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+
+<body class="flex flex-col">
+<div class="progress fixed top-0 left-0 h-1 w-full">
+    <div class="progress-bar h-1 bg-orange-700 w-100 transition-transform origin-left scale-x-0"></div>
+</div>
+<header class="border-b">
+    <div class="container mx-auto flex flex-row px-2 py-2">
+        <h1 class="py-4">
+            <a href="/" class="py-2 text-orange-700 hover:text-orange-500" data-swap="main">
+                Amitosh
+            </a>
+        </h1>
+        <nav class="ml-auto">
+            <ul class="flex flex-row py-4">
+                <li class="mx-2"><a data-swap="main" class="text-orange-700 hover:text-orange-500" href="index.html">Home</a>
+                </li>
+                <li class="mx-2"><a data-swap="main" class="text-orange-700 hover:text-orange-500"
+                                    href="aboutme.html">Resume</a></li>
+                <li class="mx-2"><a data-swap="main" class="text-orange-700 hover:text-orange-500"
+                                    href="talks.html">Talks</a></li>
+                <li class="mx-2"><a class="text-orange-700 hover:text-orange-500"
+                                    href="https://amitosh.medium.com">Blog</a></li>
+                <li class="mx-2"><a class="text-orange-700 hover:text-orange-500"
+                                    href="https://recursivefunction.blog">Newsletter</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+<main class="container mx-auto max-w-6xl p-8 lg:px-16">
+    <section class="py-8 border-b">
+        <h1 class="text-4xl my-2">🎤 Talks & Presentations</h1>
+        <p class="text-neutral-700 mt-4">
+            A collection of my conference talks and presentations on software engineering, data pipelines, and machine learning.
+        </p>
+    </section>
+
+    {{#each talks}}
+    <article class="my-12 py-8 border-b" id="talk-{{@index}}">
+        <div class="mb-6">
+            <h2 class="text-3xl mb-2">{{title}}</h2>
+            <div class="flex flex-wrap items-center gap-2 text-neutral-600 mb-4">
+                <span class="font-medium text-orange-700">{{event}}</span>
+                <span>•</span>
+                <span>📅 {{date}}</span>
+                <span>•</span>
+                <span>📍 {{location}}</span>
+            </div>
+            <p class="text-neutral-700 mb-4">{{description}}</p>
+            <div class="flex flex-wrap">
+                {{#each tags}}
+                <span class="tag">{{this}}</span>
+                {{/each}}
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Slides Section -->
+            <div>
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-medium">📊 Slides</h3>
+                    <a href="{{slides}}" download class="slide-btn">
+                        ⬇️ Download PDF
+                    </a>
+                </div>
+                <div class="slide-container">
+                    <canvas id="slide-canvas-{{@index}}" class="slide-canvas"></canvas>
+                </div>
+                <div class="slide-controls">
+                    <button class="slide-btn" id="prev-{{@index}}" disabled>← Previous</button>
+                    <span class="slide-counter" id="counter-{{@index}}">1 / 1</span>
+                    <button class="slide-btn" id="next-{{@index}}" disabled>Next →</button>
+                </div>
+            </div>
+
+            <!-- Video Section -->
+            <div>
+                {{#if youtube}}
+                <h3 class="text-xl font-medium mb-4">🎥 Video</h3>
+                <div class="youtube-embed">
+                    <iframe src="{{youtube}}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+                {{else}}
+                <div class="flex items-center justify-center h-full bg-neutral-100 rounded-lg">
+                    <p class="text-neutral-500 text-center p-8">
+                        📹 Video recording coming soon
+                    </p>
+                </div>
+                {{/if}}
+            </div>
+        </div>
+    </article>
+    {{/each}}
+</main>
+<footer class="py-8">
+    <div class="container mx-auto flex flex-row px-2">
+        <p class="mx-auto text-xs text-neutral-400">
+            © 2023 Amitosh Swain Mahapatra. Content available under CC BY 4.0
+        </p>
+    </div>
+</footer>
+<script async defer src="scripts/index.js"></script>
+<script>
+    // Configure PDF.js worker
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+    // Slide viewer class
+    class SlideViewer {
+        constructor(index, pdfUrl) {
+            this.index = index;
+            this.pdfUrl = pdfUrl;
+            this.canvas = document.getElementById(`slide-canvas-${index}`);
+            this.ctx = this.canvas.getContext('2d');
+            this.prevBtn = document.getElementById(`prev-${index}`);
+            this.nextBtn = document.getElementById(`next-${index}`);
+            this.counter = document.getElementById(`counter-${index}`);
+            this.currentPage = 1;
+            this.totalPages = 0;
+            this.pdfDoc = null;
+            this.scale = 1.5;
+
+            this.init();
+        }
+
+        async init() {
+            try {
+                // Load PDF
+                const loadingTask = pdfjsLib.getDocument(this.pdfUrl);
+                this.pdfDoc = await loadingTask.promise;
+                this.totalPages = this.pdfDoc.numPages;
+
+                // Render first page
+                await this.renderPage(1);
+
+                // Enable buttons
+                this.updateButtons();
+
+                // Add event listeners
+                this.prevBtn.addEventListener('click', () => this.prevPage());
+                this.nextBtn.addEventListener('click', () => this.nextPage());
+            } catch (error) {
+                console.error('Error loading PDF:', error);
+                this.ctx.font = '20px sans-serif';
+                this.ctx.fillText('Failed to load slides', 50, 50);
+            }
+        }
+
+        async renderPage(pageNum) {
+            try {
+                const page = await this.pdfDoc.getPage(pageNum);
+                const viewport = page.getViewport({ scale: this.scale });
+
+                // Set canvas dimensions
+                this.canvas.height = viewport.height;
+                this.canvas.width = viewport.width;
+
+                // Render page
+                const renderContext = {
+                    canvasContext: this.ctx,
+                    viewport: viewport
+                };
+
+                await page.render(renderContext).promise;
+                this.currentPage = pageNum;
+                this.updateButtons();
+            } catch (error) {
+                console.error('Error rendering page:', error);
+            }
+        }
+
+        updateButtons() {
+            this.prevBtn.disabled = this.currentPage <= 1;
+            this.nextBtn.disabled = this.currentPage >= this.totalPages;
+            this.counter.textContent = `${this.currentPage} / ${this.totalPages}`;
+        }
+
+        prevPage() {
+            if (this.currentPage > 1) {
+                this.renderPage(this.currentPage - 1);
+            }
+        }
+
+        nextPage() {
+            if (this.currentPage < this.totalPages) {
+                this.renderPage(this.currentPage + 1);
+            }
+        }
+    }
+
+    // Initialize all slide viewers
+    document.addEventListener('DOMContentLoaded', () => {
+        {{#each talks}}
+        new SlideViewer({{@index}}, '{{slides}}');
+        {{/each}}
+    });
+</script>
+</body>
+
+</html>

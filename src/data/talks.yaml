@@ -1,0 +1,18 @@
+talks:
+  - title: "Testing Data Pipelines"
+    event: "PyCon US 2024"
+    date: "May 2024"
+    location: "Pittsburgh, PA"
+    description: "A comprehensive guide to testing data pipelines, covering unit tests, integration tests, and best practices for ensuring data quality and reliability in production systems."
+    slides: "assets/talks/pycon-us-2024-testing-data-pipelines.pdf"
+    youtube: "https://www.youtube.com/watch?v=example1"
+    tags: ["Python", "Testing", "Data Engineering"]
+
+  - title: "Machine Learning for Audio Processing"
+    event: "SciPy India 2018"
+    date: "December 2018"
+    location: "Bangalore, India"
+    description: "Exploring machine learning techniques for audio signal processing, including feature extraction, classification, and practical applications in real-world scenarios."
+    slides: "assets/talks/scipy-india-2018-ml-audio.pdf"
+    youtube: ""
+    tags: ["Machine Learning", "Audio", "Python"]
