@@ -11,6 +11,10 @@ const cssnano = require("cssnano");
 const { optimize } = require("svgo");
 const yaml = require("js-yaml");
 const handlebars = require("handlebars");
+const { exec } = require("child_process");
+const { promisify } = require("util");
+
+const execAsync = promisify(exec);
 
 function dest(path) {
 	return path.replace(/^src/, "build");
@@ -22,6 +26,45 @@ async function processSvg(src, dest) {
 	const result = optimize(svg, { path: src });
 	await fs.mkdir(path.dirname(dest), { recursive: true });
 	await fs.writeFile(dest, result.data);
+}
+
+async function processPdf(src, dest) {
+	console.log(`[PDF] ${src} -> ${dest}`);
+
+	// Copy the original PDF for download
+	await fs.mkdir(path.dirname(dest), { recursive: true });
+	await fs.copyFile(src, dest);
+
+	// Extract the PDF name without extension
+	const pdfName = path.basename(src, '.pdf');
+	const outputDir = path.join(path.dirname(dest), pdfName);
+
+	// Create directory for slide images
+	await fs.mkdir(outputDir, { recursive: true });
+
+	try {
+		// Convert PDF to images using pdftoppm
+		// -png: output as PNG
+		// -r 150: 150 DPI resolution
+		const command = `pdftoppm -png -r 150 "${src}" "${path.join(outputDir, 'slide')}"`;
+
+		await execAsync(command);
+		console.log(`[PDF] Converted ${src} to images in ${outputDir}`);
+
+		// Create a metadata file with page count
+		const files = await fs.readdir(outputDir);
+		const slideImages = files.filter(f => f.startsWith('slide') && f.endsWith('.png')).sort();
+		const metadata = {
+			pageCount: slideImages.length,
+			slides: slideImages
+		};
+		await fs.writeFile(
+			path.join(outputDir, 'metadata.json'),
+			JSON.stringify(metadata, null, 2)
+		);
+	} catch (error) {
+		console.error(`[PDF] Error converting ${src}:`, error.message);
+	}
 }
 
 async function processCss(src, dest) {
@@ -74,6 +117,8 @@ async function processFile(src) {
 		await processCss(src, destPath);
 	} else if (src.endsWith(".svg")) {
 		await processSvg(src, destPath);
+	} else if (src.endsWith(".pdf") && src.includes("/assets/talks/")) {
+		await processPdf(src, destPath);
 	} else if (src.endsWith(".template.html")) {
 		const finalDestPath = destPath.replace(".template.html", ".html");
 		await processTemplate(src, finalDestPath);

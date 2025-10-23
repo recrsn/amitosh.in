@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Talks | Amitosh</title>
     <link rel="stylesheet" href="styles/index.css"/>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-8937NR279Q"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
@@ -28,10 +27,15 @@
             overflow: hidden;
         }
 
-        .slide-canvas {
+        .slide-image {
             width: 100%;
             height: auto;
             display: block;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .slide-image.loading {
+            opacity: 0.6;
         }
 
         .slide-controls {
@@ -170,7 +174,7 @@
                     </a>
                 </div>
                 <div class="slide-container">
-                    <canvas id="slide-canvas-{{@index}}" class="slide-canvas"></canvas>
+                    <img id="slide-image-{{@index}}" class="slide-image" alt="Slide" />
                 </div>
                 <div class="slide-controls">
                     <button class="slide-btn" id="prev-{{@index}}" disabled>← Previous</button>
@@ -207,89 +211,117 @@
 </footer>
 <script async defer src="scripts/index.js"></script>
 <script>
-    // Configure PDF.js worker
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-
-    // Slide viewer class
+    // Slide viewer class using pre-rendered images
     class SlideViewer {
-        constructor(index, pdfUrl) {
+        constructor(index, slidesPath) {
             this.index = index;
-            this.pdfUrl = pdfUrl;
-            this.canvas = document.getElementById(`slide-canvas-${index}`);
-            this.ctx = this.canvas.getContext('2d');
+            this.slidesPath = slidesPath;
+            this.image = document.getElementById(`slide-image-${index}`);
             this.prevBtn = document.getElementById(`prev-${index}`);
             this.nextBtn = document.getElementById(`next-${index}`);
             this.counter = document.getElementById(`counter-${index}`);
-            this.currentPage = 1;
-            this.totalPages = 0;
-            this.pdfDoc = null;
-            this.scale = 1.5;
+            this.currentSlide = 1;
+            this.totalSlides = 0;
+            this.slides = [];
 
             this.init();
         }
 
         async init() {
             try {
-                // Load PDF
-                const loadingTask = pdfjsLib.getDocument(this.pdfUrl);
-                this.pdfDoc = await loadingTask.promise;
-                this.totalPages = this.pdfDoc.numPages;
+                // Get the PDF name from the path
+                const pdfName = this.slidesPath.split('/').pop().replace('.pdf', '');
+                const metadataPath = `assets/talks/${pdfName}/metadata.json`;
 
-                // Render first page
-                await this.renderPage(1);
+                // Load metadata
+                const response = await fetch(metadataPath);
+                if (!response.ok) {
+                    throw new Error(`Failed to load metadata: ${response.statusText}`);
+                }
+
+                const metadata = await response.json();
+                this.slides = metadata.slides;
+                this.totalSlides = metadata.pageCount;
+
+                // Show first slide
+                await this.showSlide(1);
 
                 // Enable buttons
                 this.updateButtons();
 
                 // Add event listeners
-                this.prevBtn.addEventListener('click', () => this.prevPage());
-                this.nextBtn.addEventListener('click', () => this.nextPage());
+                this.prevBtn.addEventListener('click', () => this.prevSlide());
+                this.nextBtn.addEventListener('click', () => this.nextSlide());
+
+                // Add keyboard navigation
+                this.addKeyboardNavigation();
             } catch (error) {
-                console.error('Error loading PDF:', error);
-                this.ctx.font = '20px sans-serif';
-                this.ctx.fillText('Failed to load slides', 50, 50);
+                console.error('Error loading slides:', error);
+                this.image.alt = 'Failed to load slides. Please ensure PDF has been processed.';
+                this.counter.textContent = 'N/A';
             }
         }
 
-        async renderPage(pageNum) {
-            try {
-                const page = await this.pdfDoc.getPage(pageNum);
-                const viewport = page.getViewport({ scale: this.scale });
+        async showSlide(slideNum) {
+            if (slideNum < 1 || slideNum > this.totalSlides) return;
 
-                // Set canvas dimensions
-                this.canvas.height = viewport.height;
-                this.canvas.width = viewport.width;
+            const pdfName = this.slidesPath.split('/').pop().replace('.pdf', '');
+            const imagePath = `assets/talks/${pdfName}/${this.slides[slideNum - 1]}`;
 
-                // Render page
-                const renderContext = {
-                    canvasContext: this.ctx,
-                    viewport: viewport
-                };
+            // Add loading class
+            this.image.classList.add('loading');
 
-                await page.render(renderContext).promise;
-                this.currentPage = pageNum;
+            // Load image
+            const img = new Image();
+            img.onload = () => {
+                this.image.src = imagePath;
+                this.image.classList.remove('loading');
+                this.currentSlide = slideNum;
                 this.updateButtons();
-            } catch (error) {
-                console.error('Error rendering page:', error);
-            }
+            };
+            img.onerror = () => {
+                console.error(`Failed to load slide: ${imagePath}`);
+                this.image.alt = `Failed to load slide ${slideNum}`;
+                this.image.classList.remove('loading');
+            };
+            img.src = imagePath;
         }
 
         updateButtons() {
-            this.prevBtn.disabled = this.currentPage <= 1;
-            this.nextBtn.disabled = this.currentPage >= this.totalPages;
-            this.counter.textContent = `${this.currentPage} / ${this.totalPages}`;
+            this.prevBtn.disabled = this.currentSlide <= 1;
+            this.nextBtn.disabled = this.currentSlide >= this.totalSlides;
+            this.counter.textContent = `${this.currentSlide} / ${this.totalSlides}`;
         }
 
-        prevPage() {
-            if (this.currentPage > 1) {
-                this.renderPage(this.currentPage - 1);
+        prevSlide() {
+            if (this.currentSlide > 1) {
+                this.showSlide(this.currentSlide - 1);
             }
         }
 
-        nextPage() {
-            if (this.currentPage < this.totalPages) {
-                this.renderPage(this.currentPage + 1);
+        nextSlide() {
+            if (this.currentSlide < this.totalSlides) {
+                this.showSlide(this.currentSlide + 1);
             }
+        }
+
+        addKeyboardNavigation() {
+            // Only add keyboard navigation when this slideshow is visible
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        document.addEventListener('keydown', this.handleKeyPress);
+                    } else {
+                        document.removeEventListener('keydown', this.handleKeyPress);
+                    }
+                });
+            });
+            observer.observe(this.image);
+
+            this.handleKeyPress = (e) => {
+                if (e.key === 'ArrowLeft') this.prevSlide();
+                if (e.key === 'ArrowRight') this.nextSlide();
+            };
         }
     }
 
