@@ -43,17 +43,27 @@ async function processPdf(src, dest) {
 	await fs.mkdir(outputDir, { recursive: true });
 
 	try {
-		// Convert PDF to images using pdftoppm
-		// -png: output as PNG
-		// -r 150: 150 DPI resolution
-		const command = `pdftoppm -png -r 150 "${src}" "${path.join(outputDir, 'slide')}"`;
+		// Convert PDF to images using ImageMagick
+		// -density 150: 150 DPI resolution
+		// -quality 85: PNG quality
+		// -alpha remove: remove transparency
+		// -background white: use white background
+		const outputPattern = path.join(outputDir, 'slide-%d.png');
+		const command = `convert -density 150 -quality 85 -alpha remove -background white "${src}" "${outputPattern}"`;
 
 		await execAsync(command);
 		console.log(`[PDF] Converted ${src} to images in ${outputDir}`);
 
 		// Create a metadata file with page count
 		const files = await fs.readdir(outputDir);
-		const slideImages = files.filter(f => f.startsWith('slide') && f.endsWith('.png')).sort();
+		const slideImages = files
+			.filter(f => f.startsWith('slide-') && f.endsWith('.png'))
+			.sort((a, b) => {
+				// Extract page numbers and sort numerically
+				const aNum = parseInt(a.match(/slide-(\d+)\.png/)[1]);
+				const bNum = parseInt(b.match(/slide-(\d+)\.png/)[1]);
+				return aNum - bNum;
+			});
 		const metadata = {
 			pageCount: slideImages.length,
 			slides: slideImages
