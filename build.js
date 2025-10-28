@@ -20,6 +20,18 @@ function dest(path) {
 	return path.replace(/^src/, "build");
 }
 
+function slugify(text) {
+	return text
+		.toString()
+		.toLowerCase()
+		.trim()
+		.replace(/\s+/g, '-')        // Replace spaces with -
+		.replace(/[^\w\-]+/g, '')    // Remove all non-word chars
+		.replace(/\-\-+/g, '-')      // Replace multiple - with single -
+		.replace(/^-+/, '')          // Trim - from start of text
+		.replace(/-+$/, '');         // Trim - from end of text
+}
+
 async function processSvg(src, dest) {
 	console.log(`[SVG] ${src} -> ${dest}`);
 	const svg = await fs.readFile(src, "utf-8");
@@ -139,12 +151,14 @@ async function processTalksListTemplate(src, dest, templateContent) {
 	const dataContent = await fs.readFile(dataPath, "utf-8");
 	const data = yaml.load(dataContent);
 
-	// Add thumbnail path (first slide) to each talk
+	// Add thumbnail path (first slide) and slug to each talk
 	data.talks = data.talks.map((talk, index) => {
 		const pdfName = talk.slides.split('/').pop().replace('.pdf', '');
+		const slug = slugify(talk.title);
 		return {
 			...talk,
-			thumbnailPath: `assets/talks/${pdfName}/slide-0.png`
+			thumbnailPath: `assets/talks/${pdfName}/slide-0.png`,
+			slug: slug
 		};
 	});
 
@@ -164,11 +178,12 @@ async function processTalkDetailTemplates(src, templateContent) {
 
 	const template = handlebars.compile(templateContent);
 
-	// Generate a separate HTML file for each talk
+	// Generate a separate HTML file for each talk using slugified title
 	for (let i = 0; i < data.talks.length; i++) {
 		const talk = data.talks[i];
+		const slug = slugify(talk.title);
 		const output = template(talk);
-		const destPath = path.join("build", `talk-${i}.html`);
+		const destPath = path.join("build", `${slug}.html`);
 
 		await fs.mkdir(path.dirname(destPath), { recursive: true });
 		await fs.writeFile(destPath, output);
