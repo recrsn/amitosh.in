@@ -104,6 +104,19 @@ async function processTemplate(src, dest) {
 
 	// Determine which data file to use based on the template name
 	const templateName = path.basename(src, '.template.html');
+
+	// Special handling for talks-list template
+	if (templateName === 'talks-list') {
+		await processTalksListTemplate(src, dest, templateContent);
+		return;
+	}
+
+	// Special handling for talk-detail template
+	if (templateName === 'talk-detail') {
+		await processTalkDetailTemplates(src, templateContent);
+		return;
+	}
+
 	// Map template names to data file names
 	const dataFileMap = {
 		'aboutme': 'resume',
@@ -119,6 +132,48 @@ async function processTemplate(src, dest) {
 
 	await fs.mkdir(path.dirname(dest), { recursive: true });
 	await fs.writeFile(dest, output);
+}
+
+async function processTalksListTemplate(src, dest, templateContent) {
+	const dataPath = path.join(path.dirname(src), "data", "talks.yaml");
+	const dataContent = await fs.readFile(dataPath, "utf-8");
+	const data = yaml.load(dataContent);
+
+	// Add thumbnail path (first slide) to each talk
+	data.talks = data.talks.map((talk, index) => {
+		const pdfName = talk.slides.split('/').pop().replace('.pdf', '');
+		return {
+			...talk,
+			thumbnailPath: `assets/talks/${pdfName}/slide-0.png`
+		};
+	});
+
+	const template = handlebars.compile(templateContent);
+	const output = template(data);
+
+	// Output as talks.html (the main talks list page)
+	const finalDest = path.join(path.dirname(dest), 'talks.html');
+	await fs.mkdir(path.dirname(finalDest), { recursive: true });
+	await fs.writeFile(finalDest, output);
+}
+
+async function processTalkDetailTemplates(src, templateContent) {
+	const dataPath = path.join(path.dirname(src), "data", "talks.yaml");
+	const dataContent = await fs.readFile(dataPath, "utf-8");
+	const data = yaml.load(dataContent);
+
+	const template = handlebars.compile(templateContent);
+
+	// Generate a separate HTML file for each talk
+	for (let i = 0; i < data.talks.length; i++) {
+		const talk = data.talks[i];
+		const output = template(talk);
+		const destPath = path.join("build", `talk-${i}.html`);
+
+		await fs.mkdir(path.dirname(destPath), { recursive: true });
+		await fs.writeFile(destPath, output);
+		console.log(`[TEMPLATE] Generated ${destPath} for talk: ${talk.title}`);
+	}
 }
 
 async function processFile(src) {

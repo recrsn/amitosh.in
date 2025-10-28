@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Talks | Amitosh</title>
+    <title>{{title}} | Amitosh</title>
     <link rel="stylesheet" href="styles/index.css"/>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-8937NR279Q"></script>
     <script>
@@ -87,16 +87,6 @@
             height: 100%;
         }
 
-        .talk-card {
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .talk-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-        }
-
         .tag {
             display: inline-block;
             padding: 0.25rem 0.75rem;
@@ -106,6 +96,18 @@
             font-size: 0.875rem;
             margin-right: 0.5rem;
             margin-top: 0.5rem;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            color: #c2410c;
+            text-decoration: none;
+            margin-bottom: 1rem;
+        }
+
+        .back-link:hover {
+            color: #ea580c;
         }
     </style>
 </head>
@@ -138,25 +140,19 @@
     </div>
 </header>
 <main class="container mx-auto max-w-6xl p-8 lg:px-16">
-    <section class="py-8 border-b">
-        <h1 class="text-4xl my-2">🎤 Talks & Presentations</h1>
-        <p class="text-neutral-700 mt-4">
-            A collection of my conference talks and presentations on software engineering, data pipelines, and machine learning.
-        </p>
-    </section>
+    <a href="talks.html" class="back-link" data-swap="main">← Back to all talks</a>
 
-    {{#each talks}}
-    <article class="my-12 py-8 border-b" id="talk-{{@index}}">
+    <article class="py-8">
         <div class="mb-6">
-            <h2 class="text-3xl mb-2">{{title}}</h2>
+            <h1 class="text-4xl mb-4">{{title}}</h1>
             <div class="flex flex-wrap items-center gap-2 text-neutral-600 mb-4">
-                <span class="font-medium text-orange-700">{{event}}</span>
+                <span class="font-medium text-orange-700 text-lg">{{event}}</span>
                 <span>•</span>
                 <span>📅 {{date}}</span>
                 <span>•</span>
                 <span>📍 {{location}}</span>
             </div>
-            <p class="text-neutral-700 mb-4">{{description}}</p>
+            <p class="text-neutral-700 text-lg mb-4">{{description}}</p>
             <div class="flex flex-wrap">
                 {{#each tags}}
                 <span class="tag">{{this}}</span>
@@ -168,25 +164,25 @@
             <!-- Slides Section -->
             <div>
                 <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-xl font-medium">📊 Slides</h3>
+                    <h2 class="text-2xl font-medium">📊 Slides</h2>
                     <a href="{{slides}}" download class="slide-btn">
                         ⬇️ Download PDF
                     </a>
                 </div>
                 <div class="slide-container">
-                    <img id="slide-image-{{@index}}" class="slide-image" alt="Slide" />
+                    <img id="slide-image" class="slide-image" alt="Slide" />
                 </div>
                 <div class="slide-controls">
-                    <button class="slide-btn" id="prev-{{@index}}" disabled>← Previous</button>
-                    <span class="slide-counter" id="counter-{{@index}}">1 / 1</span>
-                    <button class="slide-btn" id="next-{{@index}}" disabled>Next →</button>
+                    <button class="slide-btn" id="prev-btn" disabled>← Previous</button>
+                    <span class="slide-counter" id="counter">1 / 1</span>
+                    <button class="slide-btn" id="next-btn" disabled>Next →</button>
                 </div>
             </div>
 
             <!-- Video Section -->
             <div>
                 {{#if youtube}}
-                <h3 class="text-xl font-medium mb-4">🎥 Video</h3>
+                <h2 class="text-2xl font-medium mb-4">🎥 Video</h2>
                 <div class="youtube-embed">
                     <iframe src="{{youtube}}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 </div>
@@ -200,7 +196,6 @@
             </div>
         </div>
     </article>
-    {{/each}}
 </main>
 <footer class="py-8">
     <div class="container mx-auto flex flex-row px-2">
@@ -213,13 +208,12 @@
 <script>
     // Slide viewer class using pre-rendered images
     class SlideViewer {
-        constructor(index, slidesPath) {
-            this.index = index;
+        constructor(slidesPath) {
             this.slidesPath = slidesPath;
-            this.image = document.getElementById(`slide-image-${index}`);
-            this.prevBtn = document.getElementById(`prev-${index}`);
-            this.nextBtn = document.getElementById(`next-${index}`);
-            this.counter = document.getElementById(`counter-${index}`);
+            this.image = document.getElementById('slide-image');
+            this.prevBtn = document.getElementById('prev-btn');
+            this.nextBtn = document.getElementById('next-btn');
+            this.counter = document.getElementById('counter');
             this.currentSlide = 1;
             this.totalSlides = 0;
             this.slides = [];
@@ -306,30 +300,16 @@
         }
 
         addKeyboardNavigation() {
-            // Only add keyboard navigation when this slideshow is visible
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        document.addEventListener('keydown', this.handleKeyPress);
-                    } else {
-                        document.removeEventListener('keydown', this.handleKeyPress);
-                    }
-                });
-            });
-            observer.observe(this.image);
-
-            this.handleKeyPress = (e) => {
+            document.addEventListener('keydown', (e) => {
                 if (e.key === 'ArrowLeft') this.prevSlide();
                 if (e.key === 'ArrowRight') this.nextSlide();
-            };
+            });
         }
     }
 
-    // Initialize all slide viewers
+    // Initialize slide viewer
     document.addEventListener('DOMContentLoaded', () => {
-        {{#each talks}}
-        new SlideViewer({{@index}}, '{{slides}}');
-        {{/each}}
+        new SlideViewer('{{slides}}');
     });
 </script>
 </body>

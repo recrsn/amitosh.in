@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Talks | Amitosh</title>
+    <link rel="stylesheet" href="styles/index.css"/>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8937NR279Q"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
+        gtag('js', new Date());
+
+        gtag('config', 'G-8937NR279Q');
+    </script>
+    <style>
+        .talk-card {
+            display: block;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s;
+            background: white;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .talk-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border-color: #c2410c;
+        }
+
+        .talk-thumbnail {
+            width: 100%;
+            aspect-ratio: 16/9;
+            object-fit: cover;
+            background: #f5f5f5;
+        }
+
+        .talk-content {
+            padding: 1.5rem;
+        }
+
+        .talk-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: #fed7aa;
+            color: #9a3412;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            margin-right: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .talks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 640px) {
+            .talks-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body class="flex flex-col">
+<div class="progress fixed top-0 left-0 h-1 w-full">
+    <div class="progress-bar h-1 bg-orange-700 w-100 transition-transform origin-left scale-x-0"></div>
+</div>
+<header class="border-b">
+    <div class="container mx-auto flex flex-row px-2 py-2">
+        <h1 class="py-4">
+            <a href="/" class="py-2 text-orange-700 hover:text-orange-500" data-swap="main">
+                Amitosh
+            </a>
+        </h1>
+        <nav class="ml-auto">
+            <ul class="flex flex-row py-4">
+                <li class="mx-2"><a data-swap="main" class="text-orange-700 hover:text-orange-500" href="index.html">Home</a>
+                </li>
+                <li class="mx-2"><a data-swap="main" class="text-orange-700 hover:text-orange-500"
+                                    href="aboutme.html">Resume</a></li>
+                <li class="mx-2"><a data-swap="main" class="text-orange-700 hover:text-orange-500"
+                                    href="talks.html">Talks</a></li>
+                <li class="mx-2"><a class="text-orange-700 hover:text-orange-500"
+                                    href="https://amitosh.medium.com">Blog</a></li>
+                <li class="mx-2"><a class="text-orange-700 hover:text-orange-500"
+                                    href="https://recursivefunction.blog">Newsletter</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+<main class="container mx-auto max-w-6xl p-8 lg:px-16">
+    <section class="py-8">
+        <h1 class="text-4xl my-2">🎤 Talks & Presentations</h1>
+        <p class="text-neutral-700 mt-4">
+            A collection of my conference talks and presentations on software engineering, data pipelines, and machine learning.
+        </p>
+    </section>
+
+    <section class="talks-grid">
+        {{#each talks}}
+        <a href="talk-{{@index}}.html" class="talk-card" data-swap="main">
+            <img src="{{thumbnailPath}}" alt="{{title}}" class="talk-thumbnail" loading="lazy" />
+            <div class="talk-content">
+                <h2 class="text-2xl font-bold mb-2 text-neutral-900">{{title}}</h2>
+                <div class="talk-meta mb-3">
+                    <span class="font-medium text-orange-700">{{event}}</span>
+                    <span>•</span>
+                    <span>{{date}}</span>
+                    <span>•</span>
+                    <span>{{location}}</span>
+                </div>
+                <p class="text-neutral-600 mb-3">{{description}}</p>
+                <div class="flex flex-wrap">
+                    {{#each tags}}
+                    <span class="tag">{{this}}</span>
+                    {{/each}}
+                </div>
+            </div>
+        </a>
+        {{/each}}
+    </section>
+</main>
+<footer class="py-8 mt-8">
+    <div class="container mx-auto flex flex-row px-2">
+        <p class="mx-auto text-xs text-neutral-400">
+            © 2023 Amitosh Swain Mahapatra. Content available under CC BY 4.0
+        </p>
+    </div>
+</footer>
+<script async defer src="scripts/index.js"></script>
+</body>
+
+</html>
