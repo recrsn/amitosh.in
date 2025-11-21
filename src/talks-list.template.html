@@ -124,13 +124,13 @@
             <img src="{{thumbnailPath}}" alt="{{title}}" class="talk-thumbnail" loading="lazy" />
             <div class="talk-content">
                 <h2 class="text-2xl font-bold mb-2 text-neutral-900">{{title}}</h2>
+                {{#if event}}
                 <div class="talk-meta mb-3">
-                    <span class="font-medium text-orange-700">{{event}}</span>
-                    <span>•</span>
-                    <span>{{date}}</span>
-                    <span>•</span>
-                    <span>{{location}}</span>
+                    {{#if event}}<span class="font-medium text-orange-700">{{event}}</span>{{/if}}
+                    {{#if date}}{{#if event}}<span>•</span>{{/if}}<span>{{date}}</span>{{/if}}
+                    {{#if location}}{{#if (or event date)}}<span>•</span>{{/if}}<span>{{location}}</span>{{/if}}
                 </div>
+                {{/if}}
                 <p class="text-neutral-600 mb-3">{{description}}</p>
                 <div class="flex flex-wrap">
                     {{#each tags}}

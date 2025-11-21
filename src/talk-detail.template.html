@@ -145,13 +145,13 @@
     <article class="py-8">
         <div class="mb-6">
             <h1 class="text-4xl mb-4">{{title}}</h1>
+            {{#if (or event date location)}}
             <div class="flex flex-wrap items-center gap-2 text-neutral-600 mb-4">
-                <span class="font-medium text-orange-700 text-lg">{{event}}</span>
-                <span>•</span>
-                <span>📅 {{date}}</span>
-                <span>•</span>
-                <span>📍 {{location}}</span>
+                {{#if event}}<span class="font-medium text-orange-700 text-lg">{{event}}</span>{{/if}}
+                {{#if date}}{{#if event}}<span>•</span>{{/if}}<span>📅 {{date}}</span>{{/if}}
+                {{#if location}}{{#if (or event date)}}<span>•</span>{{/if}}<span>📍 {{location}}</span>{{/if}}
             </div>
+            {{/if}}
             <p class="text-neutral-700 text-lg mb-4">{{description}}</p>
             <div class="flex flex-wrap">
                 {{#each tags}}
