@@ -23,6 +23,10 @@ handlebars.registerHelper("or", function () {
 	return args.some((arg) => !!arg);
 });
 
+handlebars.registerHelper("currentYear", function () {
+	return new Date().getFullYear();
+});
+
 function dest(path) {
 	return path.replace(/^src/, "build");
 }
@@ -133,6 +137,15 @@ async function processTemplate(src, dest) {
 	// Special handling for talk-detail template
 	if (templateName === "talk-detail") {
 		await processTalkDetailTemplates(src, templateContent);
+		return;
+	}
+
+	// Special handling for index template (no data file needed)
+	if (templateName === "index") {
+		const template = handlebars.compile(templateContent);
+		const output = template({});
+		await fs.mkdir(path.dirname(dest), { recursive: true });
+		await fs.writeFile(dest, output);
 		return;
 	}
 

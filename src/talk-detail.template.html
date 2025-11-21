@@ -19,97 +19,6 @@
 
         gtag('config', 'G-8937NR279Q');
     </script>
-    <style>
-        .slide-container {
-            position: relative;
-            background: #f5f5f5;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .slide-image {
-            width: 100%;
-            height: auto;
-            display: block;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .slide-image.loading {
-            opacity: 0.6;
-        }
-
-        .slide-controls {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .slide-btn {
-            padding: 0.5rem 1rem;
-            background: #c2410c;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .slide-btn:hover:not(:disabled) {
-            background: #ea580c;
-        }
-
-        .slide-btn:disabled {
-            background: #d4d4d4;
-            cursor: not-allowed;
-        }
-
-        .slide-counter {
-            font-weight: 500;
-            min-width: 80px;
-            text-align: center;
-        }
-
-        .youtube-embed {
-            position: relative;
-            padding-bottom: 56.25%;
-            height: 0;
-            overflow: hidden;
-            border-radius: 8px;
-        }
-
-        .youtube-embed iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-
-        .tag {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            background: #fed7aa;
-            color: #9a3412;
-            border-radius: 9999px;
-            font-size: 0.875rem;
-            margin-right: 0.5rem;
-            margin-top: 0.5rem;
-        }
-
-        .back-link {
-            display: inline-flex;
-            align-items: center;
-            color: #c2410c;
-            text-decoration: none;
-            margin-bottom: 1rem;
-        }
-
-        .back-link:hover {
-            color: #ea580c;
-        }
-    </style>
 </head>
 
 <body class="flex flex-col">
@@ -140,7 +49,7 @@
     </div>
 </header>
 <main class="container mx-auto max-w-6xl p-8 lg:px-16">
-    <a href="talks.html" class="back-link" data-swap="main">← Back to all talks</a>
+    <a href="talks.html" class="inline-flex items-center text-orange-700 hover:text-orange-600 no-underline mb-4" data-swap="main">← Back to all talks</a>
 
     <article class="py-8">
         <div class="mb-6">
@@ -153,54 +62,45 @@
             </div>
             {{/if}}
             <p class="text-neutral-700 text-lg mb-4">{{description}}</p>
-            <div class="flex flex-wrap">
+            {{#if tags}}
+            <div class="flex flex-wrap gap-2">
                 {{#each tags}}
-                <span class="tag">{{this}}</span>
+                <span class="inline-block px-3.5 py-1.5 bg-orange-100 text-orange-800 rounded-full text-sm font-medium">{{this}}</span>
                 {{/each}}
             </div>
+            {{/if}}
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <!-- Slides Section -->
-            <div>
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-2xl font-medium">📊 Slides</h2>
-                    <a href="{{slides}}" download class="slide-btn">
+        <!-- Slides Section -->
+        <section class="mb-8">
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
+                <h2 class="text-2xl font-medium">📊 Slides</h2>
+                <div class="flex flex-wrap gap-4 items-center">
+                    <a href="{{slides}}" download class="inline-flex items-center gap-2 px-5 py-2.5 bg-orange-700 hover:bg-orange-600 text-white rounded-md no-underline font-medium">
                         ⬇️ Download PDF
                     </a>
-                </div>
-                <div class="slide-container">
-                    <img id="slide-image" class="slide-image" alt="Slide" />
-                </div>
-                <div class="slide-controls">
-                    <button class="slide-btn" id="prev-btn" disabled>← Previous</button>
-                    <span class="slide-counter" id="counter">1 / 1</span>
-                    <button class="slide-btn" id="next-btn" disabled>Next →</button>
+                    {{#if youtube}}
+                    <a href="{{youtube}}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-md no-underline font-medium">
+                        🎥 Watch Video
+                    </a>
+                    {{/if}}
                 </div>
             </div>
-
-            <!-- Video Section -->
-            <div>
-                {{#if youtube}}
-                <h2 class="text-2xl font-medium mb-4">🎥 Video</h2>
-                <div class="youtube-embed">
-                    <iframe src="{{youtube}}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                </div>
-                {{else}}
-                <div class="flex items-center justify-center h-full bg-neutral-100 rounded-lg">
-                    <p class="text-neutral-500 text-center p-8">
-                        📹 Video recording coming soon
-                    </p>
-                </div>
-                {{/if}}
+            <div class="relative bg-neutral-100 rounded-lg overflow-hidden">
+                <img id="slide-image" class="w-full h-auto block shadow-md" alt="Slide" />
             </div>
-        </div>
+            <div class="flex justify-center items-center gap-4 mt-4">
+                <button class="px-4 py-2 bg-orange-700 hover:bg-orange-600 disabled:bg-neutral-300 disabled:cursor-not-allowed text-white border-none rounded cursor-pointer" id="prev-btn" disabled>← Previous</button>
+                <span class="font-medium min-w-[80px] text-center" id="counter">1 / 1</span>
+                <button class="px-4 py-2 bg-orange-700 hover:bg-orange-600 disabled:bg-neutral-300 disabled:cursor-not-allowed text-white border-none rounded cursor-pointer" id="next-btn" disabled>Next →</button>
+            </div>
+        </section>
     </article>
 </main>
 <footer class="py-8">
     <div class="container mx-auto flex flex-row px-2">
         <p class="mx-auto text-xs text-neutral-400">
-            © 2023 Amitosh Swain Mahapatra. Content available under CC BY 4.0
+            © {{currentYear}} Amitosh Swain Mahapatra. Content available under CC BY 4.0
         </p>
     </div>
 </footer>
@@ -262,21 +162,21 @@
             const pdfName = this.slidesPath.split('/').pop().replace('.pdf', '');
             const imagePath = `assets/talks/${pdfName}/${this.slides[slideNum - 1]}`;
 
-            // Add loading class
-            this.image.classList.add('loading');
+            // Add loading opacity
+            this.image.classList.add('opacity-60');
 
             // Load image
             const img = new Image();
             img.onload = () => {
                 this.image.src = imagePath;
-                this.image.classList.remove('loading');
+                this.image.classList.remove('opacity-60');
                 this.currentSlide = slideNum;
                 this.updateButtons();
             };
             img.onerror = () => {
                 console.error(`Failed to load slide: ${imagePath}`);
                 this.image.alt = `Failed to load slide ${slideNum}`;
-                this.image.classList.remove('loading');
+                this.image.classList.remove('opacity-60');
             };
             img.src = imagePath;
         }
