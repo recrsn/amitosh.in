@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}} | Amitosh</title>
+    <link rel="stylesheet" href="styles/index.css"/>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8937NR279Q"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
+        gtag('js', new Date());
+
+        gtag('config', 'G-8937NR279Q');
+    </script>
+</head>
+
+<body class="flex flex-col">
+<div class="progress fixed top-0 left-0 h-1 w-full">
+    <div class="progress-bar h-1 bg-orange-700 w-100 transition-transform origin-left scale-x-0"></div>
+</div>
+<header class="border-b">
+    <div class="container mx-auto flex flex-row px-2 py-2">
+        <h1 class="py-4">
+            <a href="/" class="py-2 text-orange-700 hover:text-orange-500" data-swap="main">
+                Amitosh
+            </a>
+        </h1>
+        <nav class="ml-auto">
+            <ul class="flex flex-row py-4">
+                <li class="mx-2"><a data-swap="main" class="text-orange-700 hover:text-orange-500" href="index.html">Home</a>
+                </li>
+                <li class="mx-2"><a data-swap="main" class="text-orange-700 hover:text-orange-500"
+                                    href="aboutme.html">Resume</a></li>
+                <li class="mx-2"><a data-swap="main" class="text-orange-700 hover:text-orange-500"
+                                    href="talks.html">Talks</a></li>
+                <li class="mx-2"><a class="text-orange-700 hover:text-orange-500"
+                                    href="https://amitosh.medium.com">Blog</a></li>
+                <li class="mx-2"><a class="text-orange-700 hover:text-orange-500"
+                                    href="https://recursivefunction.blog">Newsletter</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+<main class="container mx-auto max-w-6xl p-8 lg:px-16">
+    <a href="talks.html" class="inline-flex items-center text-orange-700 hover:text-orange-600 no-underline mb-4" data-swap="main">← Back to all talks</a>
+
+    <article class="py-8">
+        <div class="mb-6">
+            <h1 class="text-4xl mb-4">{{title}}</h1>
+            {{#if (or event date location)}}
+            <div class="flex flex-wrap items-center gap-2 text-neutral-600 mb-4">
+                {{#if event}}<span class="font-medium text-orange-700 text-lg">{{event}}</span>{{/if}}
+                {{#if date}}{{#if event}}<span>•</span>{{/if}}<span>📅 {{date}}</span>{{/if}}
+                {{#if location}}{{#if (or event date)}}<span>•</span>{{/if}}<span>📍 {{location}}</span>{{/if}}
+            </div>
+            {{/if}}
+            <p class="text-neutral-700 text-lg mb-4">{{description}}</p>
+            {{#if tags}}
+            <div class="flex flex-wrap gap-2">
+                {{#each tags}}
+                <span class="inline-block px-3.5 py-1.5 bg-orange-100 text-orange-800 rounded-full text-sm font-medium">{{this}}</span>
+                {{/each}}
+            </div>
+            {{/if}}
+        </div>
+
+        <!-- Slides Section -->
+        <section class="mb-8">
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
+                <h2 class="text-2xl font-medium">📊 Slides</h2>
+                <div class="flex flex-wrap gap-4 items-center">
+                    <a href="{{slides}}" download class="inline-flex items-center gap-2 px-5 py-2.5 bg-orange-700 hover:bg-orange-600 text-white rounded-md no-underline font-medium">
+                        ⬇️ Download PDF
+                    </a>
+                    {{#if youtube}}
+                    <a href="{{youtube}}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-md no-underline font-medium">
+                        🎥 Watch Video
+                    </a>
+                    {{/if}}
+                </div>
+            </div>
+            <div class="relative bg-neutral-100 rounded-lg overflow-hidden">
+                <img id="slide-image" class="w-full h-auto block shadow-md" alt="Slide" />
+            </div>
+            <div class="flex justify-center items-center gap-4 mt-4">
+                <button class="px-4 py-2 bg-orange-700 hover:bg-orange-600 disabled:bg-neutral-300 disabled:cursor-not-allowed text-white border-none rounded cursor-pointer" id="prev-btn" disabled>← Previous</button>
+                <span class="font-medium min-w-[80px] text-center" id="counter">1 / 1</span>
+                <button class="px-4 py-2 bg-orange-700 hover:bg-orange-600 disabled:bg-neutral-300 disabled:cursor-not-allowed text-white border-none rounded cursor-pointer" id="next-btn" disabled>Next →</button>
+            </div>
+        </section>
+    </article>
+</main>
+<footer class="py-8">
+    <div class="container mx-auto flex flex-row px-2">
+        <p class="mx-auto text-xs text-neutral-400">
+            © {{currentYear}} Amitosh Swain Mahapatra. Content available under CC BY 4.0
+        </p>
+    </div>
+</footer>
+<script async defer src="scripts/index.js"></script>
+<script>
+    // Slide viewer class using pre-rendered images
+    class SlideViewer {
+        constructor(slidesPath) {
+            this.slidesPath = slidesPath;
+            this.image = document.getElementById('slide-image');
+            this.prevBtn = document.getElementById('prev-btn');
+            this.nextBtn = document.getElementById('next-btn');
+            this.counter = document.getElementById('counter');
+            this.currentSlide = 1;
+            this.totalSlides = 0;
+            this.slides = [];
+
+            this.init();
+        }
+
+        async init() {
+            try {
+                // Get the PDF name from the path
+                const pdfName = this.slidesPath.split('/').pop().replace('.pdf', '');
+                const metadataPath = `assets/talks/${pdfName}/metadata.json`;
+
+                // Load metadata
+                const response = await fetch(metadataPath);
+                if (!response.ok) {
+                    throw new Error(`Failed to load metadata: ${response.statusText}`);
+                }
+
+                const metadata = await response.json();
+                this.slides = metadata.slides;
+                this.totalSlides = metadata.pageCount;
+
+                // Show first slide
+                await this.showSlide(1);
+
+                // Enable buttons
+                this.updateButtons();
+
+                // Add event listeners
+                this.prevBtn.addEventListener('click', () => this.prevSlide());
+                this.nextBtn.addEventListener('click', () => this.nextSlide());
+
+                // Add keyboard navigation
+                this.addKeyboardNavigation();
+            } catch (error) {
+                console.error('Error loading slides:', error);
+                this.image.alt = 'Failed to load slides. Please ensure PDF has been processed.';
+                this.counter.textContent = 'N/A';
+            }
+        }
+
+        async showSlide(slideNum) {
+            if (slideNum < 1 || slideNum > this.totalSlides) return;
+
+            const pdfName = this.slidesPath.split('/').pop().replace('.pdf', '');
+            const imagePath = `assets/talks/${pdfName}/${this.slides[slideNum - 1]}`;
+
+            // Add loading opacity
+            this.image.classList.add('opacity-60');
+
+            // Load image
+            const img = new Image();
+            img.onload = () => {
+                this.image.src = imagePath;
+                this.image.classList.remove('opacity-60');
+                this.currentSlide = slideNum;
+                this.updateButtons();
+            };
+            img.onerror = () => {
+                console.error(`Failed to load slide: ${imagePath}`);
+                this.image.alt = `Failed to load slide ${slideNum}`;
+                this.image.classList.remove('opacity-60');
+            };
+            img.src = imagePath;
+        }
+
+        updateButtons() {
+            this.prevBtn.disabled = this.currentSlide <= 1;
+            this.nextBtn.disabled = this.currentSlide >= this.totalSlides;
+            this.counter.textContent = `${this.currentSlide} / ${this.totalSlides}`;
+        }
+
+        prevSlide() {
+            if (this.currentSlide > 1) {
+                this.showSlide(this.currentSlide - 1);
+            }
+        }
+
+        nextSlide() {
+            if (this.currentSlide < this.totalSlides) {
+                this.showSlide(this.currentSlide + 1);
+            }
+        }
+
+        addKeyboardNavigation() {
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft') this.prevSlide();
+                if (e.key === 'ArrowRight') this.nextSlide();
+            });
+        }
+    }
+
+    // Initialize slide viewer
+    document.addEventListener('DOMContentLoaded', () => {
+        new SlideViewer('{{slides}}');
+    });
+</script>
+</body>
+
+</html>

@@ -1,0 +1,81 @@
+talks:
+  - title: "Peeking under the hood of instrumentation agents"
+    event: "PyCon Thailand 2025"
+    date: "October 18, 2025"
+    location: "Bangkok, Thailand"
+    description: "An in-depth look at how instrumentation agents work, covering their architecture, common challenges, and best practices for implementing effective monitoring solutions in Python applications."
+    slides: "assets/talks/peeking-under-hood-instrumentation-agents.pdf"
+    youtube: ""
+    tags: ["Python", "Instrumentation", "Monitoring"]
+
+  - title: "Testing Data Pipelines"
+    event: "PyCon US 2024"
+    date: "May 18, 2024"
+    location: "Pittsburgh, USA"
+    description: "Practical approaches for testing data pipelines with Airflow as the example framework. Covers unit tests, integration tests, end-to-end testing, data snapshot testing, and data quality validation methods for both online and offline scenarios. These strategies apply across different pipeline tools, not just Airflow."
+    slides: "assets/talks/testing-data-pipelines.pdf"
+    youtube: "https://www.youtube.com/watch?v=o-tJ7OK3sSY"
+    tags: ["Python", "Testing", "Data Engineering", "Airflow"]
+
+  - title: "Machine Learning for Audio Processing"
+    event: "SciPy India 2018"
+    date: "December 22, 2018"
+    location: "Mumbai, India"
+    description: "Exploring machine learning techniques for audio signal processing, including feature extraction, classification, and practical applications in real-world scenarios."
+    slides: "assets/talks/scipy-india-2018-ml-audio.pdf"
+    youtube: ""
+    tags: ["Machine Learning", "Audio", "Python"]
+
+  - title: "State of SELinux in Fedora desktop, modularity and container worlds"
+    event: "Flock to Fedora 2018"
+    date: "August 9, 2018"
+    location: "Dresden, Germany"
+    description: "Covering how SELinux policies are designed and written in Fedora, how they will be impacted by modularity, and a discussion on how to secure containers using SELinux. The talk generated actionable suggestions for improving SELinux policy management and distribution."
+    slides: "assets/talks/selinux-fedora.pdf"
+    youtube: ""
+    tags: ["SELinux", "Security", "Linux", "Fedora", "Containers"]
+
+  - title: "Automating AWS Infrastructure with CodeRabbit"
+    event: "AWS User Group - Bangalore Meetup"
+    date: "October 25, 2025"
+    location: "Bangalore, India"
+    description: "Exploring automation strategies for AWS infrastructure management using CodeRabbit's AI-powered tooling."
+    slides: "assets/talks/automating-aws-infrastructure-coderabbit.pdf"
+    youtube: ""
+    tags: ["AWS", "Infrastructure", "Automation", "CodeRabbit", "Meetup"]
+
+  - title: "Building platforms that 'Just Work'"
+    event: "DevOpsDays Bengaluru 2023"
+    date: "October 20, 2023"
+    location: "Bengaluru, India"
+    description: "Discussion on building developer platforms and infrastructure that provide seamless developer experience."
+    slides: "assets/talks/building-platforms-that-just-work.pdf"
+    youtube: ""
+    tags: ["Platform Engineering", "DevOps", "Infrastructure", "Meetup"]
+
+  - title: "Static Typing in Python with MyPy"
+    event: ""
+    date: ""
+    location: ""
+    description: "Introduction to static type checking in Python using MyPy for improved code quality and developer productivity."
+    slides: "assets/talks/static-typing-python-mypy.pdf"
+    youtube: ""
+    tags: ["Python", "Type Checking", "MyPy", "Meetup"]
+
+  - title: "Kubernetes 101"
+    event: "DevFest 2018 by GDG Bhubaneswar"
+    date: "October 28, 2018"
+    location: "Bhubaneswar, India"
+    description: "Introduction to Kubernetes fundamentals, covering core concepts, architecture, and basic operations."
+    slides: "assets/talks/kubernetes-101.pdf"
+    youtube: ""
+    tags: ["Kubernetes", "DevOps", "Containers", "Meetup"]
+
+  - title: "Introduction to Envoy: A Programmable Proxy for Cloud-Native Applications"
+    event: ""
+    date: ""
+    location: ""
+    description: "Overview of Envoy proxy, its architecture, and use cases in cloud-native application deployments."
+    slides: "assets/talks/introduction-to-envoy-proxy.pdf"
+    youtube: ""
+    tags: ["Envoy", "Proxy", "Cloud Native", "Microservices", "Meetup"]

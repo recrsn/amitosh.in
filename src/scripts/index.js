@@ -1,6 +1,12 @@
 (() => {
 	const progress = document.querySelector(".progress-bar");
 
+	// Update copyright year
+	const yearElement = document.getElementById("copyright-year");
+	if (yearElement) {
+		yearElement.textContent = new Date().getFullYear();
+	}
+
 	const loadPage = (url, targetSelector) => {
 		const target = document.querySelector(targetSelector);
 		const request = new XMLHttpRequest();

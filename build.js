@@ -11,9 +11,36 @@ const cssnano = require("cssnano");
 const { optimize } = require("svgo");
 const yaml = require("js-yaml");
 const handlebars = require("handlebars");
+const { exec } = require("child_process");
+const { promisify } = require("util");
+
+const execAsync = promisify(exec);
+
+// Register Handlebars helpers
+handlebars.registerHelper("or", function () {
+	// Convert arguments object to array and remove the last item (options object)
+	const args = Array.prototype.slice.call(arguments, 0, -1);
+	return args.some((arg) => !!arg);
+});
+
+handlebars.registerHelper("currentYear", function () {
+	return new Date().getFullYear();
+});
 
 function dest(path) {
 	return path.replace(/^src/, "build");
+}
+
+function slugify(text) {
+	return text
+		.toString()
+		.toLowerCase()
+		.trim()
+		.replace(/\s+/g, "-") // Replace spaces with -
+		.replace(/[^\w\-]+/g, "") // Remove all non-word chars
+		.replace(/\-\-+/g, "-") // Replace multiple - with single -
+		.replace(/^-+/, "") // Trim - from start of text
+		.replace(/-+$/, ""); // Trim - from end of text
 }
 
 async function processSvg(src, dest) {
@@ -22,6 +49,55 @@ async function processSvg(src, dest) {
 	const result = optimize(svg, { path: src });
 	await fs.mkdir(path.dirname(dest), { recursive: true });
 	await fs.writeFile(dest, result.data);
+}
+
+async function processPdf(src, dest) {
+	console.log(`[PDF] ${src} -> ${dest}`);
+
+	// Copy the original PDF for download
+	await fs.mkdir(path.dirname(dest), { recursive: true });
+	await fs.copyFile(src, dest);
+
+	// Extract the PDF name without extension
+	const pdfName = path.basename(src, ".pdf");
+	const outputDir = path.join(path.dirname(dest), pdfName);
+
+	// Create directory for slide images
+	await fs.mkdir(outputDir, { recursive: true });
+
+	try {
+		// Convert PDF to images using ImageMagick
+		// -density 150: 150 DPI resolution
+		// -quality 85: PNG quality
+		// -alpha remove: remove transparency
+		// -background white: use white background
+		const outputPattern = path.join(outputDir, "slide-%d.png");
+		const command = `convert -density 150 -quality 85 -alpha remove -background white "${src}" "${outputPattern}"`;
+
+		await execAsync(command);
+		console.log(`[PDF] Converted ${src} to images in ${outputDir}`);
+
+		// Create a metadata file with page count
+		const files = await fs.readdir(outputDir);
+		const slideImages = files
+			.filter((f) => f.startsWith("slide-") && f.endsWith(".png"))
+			.sort((a, b) => {
+				// Extract page numbers and sort numerically
+				const aNum = parseInt(a.match(/slide-(\d+)\.png/)[1]);
+				const bNum = parseInt(b.match(/slide-(\d+)\.png/)[1]);
+				return aNum - bNum;
+			});
+		const metadata = {
+			pageCount: slideImages.length,
+			slides: slideImages,
+		};
+		await fs.writeFile(
+			path.join(outputDir, "metadata.json"),
+			JSON.stringify(metadata, null, 2),
+		);
+	} catch (error) {
+		console.error(`[PDF] Error converting ${src}:`, error.message);
+	}
 }
 
 async function processCss(src, dest) {
@@ -48,7 +124,38 @@ async function copy(src, dest) {
 async function processTemplate(src, dest) {
 	console.log(`[TEMPLATE] ${src} -> ${dest}`);
 	const templateContent = await fs.readFile(src, "utf-8");
-	const dataPath = path.join(path.dirname(src), "data", "resume.yaml");
+
+	// Determine which data file to use based on the template name
+	const templateName = path.basename(src, ".template.html");
+
+	// Special handling for talks-list template
+	if (templateName === "talks-list") {
+		await processTalksListTemplate(src, dest, templateContent);
+		return;
+	}
+
+	// Special handling for talk-detail template
+	if (templateName === "talk-detail") {
+		await processTalkDetailTemplates(src, templateContent);
+		return;
+	}
+
+	// Special handling for index template (no data file needed)
+	if (templateName === "index") {
+		const template = handlebars.compile(templateContent);
+		const output = template({});
+		await fs.mkdir(path.dirname(dest), { recursive: true });
+		await fs.writeFile(dest, output);
+		return;
+	}
+
+	// Map template names to data file names
+	const dataFileMap = {
+		aboutme: "resume",
+		talks: "talks",
+	};
+	const dataFileName = dataFileMap[templateName] || templateName;
+	const dataPath = path.join(path.dirname(src), "data", `${dataFileName}.yaml`);
 	const dataContent = await fs.readFile(dataPath, "utf-8");
 	const data = yaml.load(dataContent);
 
@@ -59,12 +166,59 @@ async function processTemplate(src, dest) {
 	await fs.writeFile(dest, output);
 }
 
+async function processTalksListTemplate(src, dest, templateContent) {
+	const dataPath = path.join(path.dirname(src), "data", "talks.yaml");
+	const dataContent = await fs.readFile(dataPath, "utf-8");
+	const data = yaml.load(dataContent);
+
+	// Add thumbnail path (first slide) and slug to each talk
+	data.talks = data.talks.map((talk, index) => {
+		const pdfName = talk.slides.split("/").pop().replace(".pdf", "");
+		const slug = slugify(talk.title);
+		return {
+			...talk,
+			thumbnailPath: `assets/talks/${pdfName}/slide-0.png`,
+			slug: slug,
+		};
+	});
+
+	const template = handlebars.compile(templateContent);
+	const output = template(data);
+
+	// Output as talks.html (the main talks list page)
+	const finalDest = path.join(path.dirname(dest), "talks.html");
+	await fs.mkdir(path.dirname(finalDest), { recursive: true });
+	await fs.writeFile(finalDest, output);
+}
+
+async function processTalkDetailTemplates(src, templateContent) {
+	const dataPath = path.join(path.dirname(src), "data", "talks.yaml");
+	const dataContent = await fs.readFile(dataPath, "utf-8");
+	const data = yaml.load(dataContent);
+
+	const template = handlebars.compile(templateContent);
+
+	// Generate a separate HTML file for each talk using slugified title
+	for (let i = 0; i < data.talks.length; i++) {
+		const talk = data.talks[i];
+		const slug = slugify(talk.title);
+		const output = template(talk);
+		const destPath = path.join("build", `${slug}.html`);
+
+		await fs.mkdir(path.dirname(destPath), { recursive: true });
+		await fs.writeFile(destPath, output);
+		console.log(`[TEMPLATE] Generated ${destPath} for talk: ${talk.title}`);
+	}
+}
+
 async function processFile(src) {
 	const destPath = dest(src);
 	if (src.endsWith(".css")) {
 		await processCss(src, destPath);
 	} else if (src.endsWith(".svg")) {
 		await processSvg(src, destPath);
+	} else if (src.endsWith(".pdf") && src.includes("/assets/talks/")) {
+		await processPdf(src, destPath);
 	} else if (src.endsWith(".template.html")) {
 		const finalDestPath = destPath.replace(".template.html", ".html");
 		await processTemplate(src, finalDestPath);
